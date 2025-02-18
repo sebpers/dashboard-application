@@ -1,0 +1,35 @@
+<div class="mb-4">
+  <h2 class="text-success">Sign Up</h2>
+
+  <div>
+    Already have an account?
+    <a routerLink="/signin" class="text-decoration-none fw-medium text-success"
+      >Sign in</a
+    >
+  </div>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <ng-container *ngFor="let field of formFields">
+    <div class="mb-3">
+      <input
+        [type]="field.type"
+        class="form-control bg-body-secondary"
+        [placeholder]="field.placeholder"
+        [formControlName]="field.name"
+      />
+
+      <div *ngIf="hasDisplayableError(field.name)" class="error-feedback">
+        <div>
+          {{ getErrorMessage(field.name) }}
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="mt-4">
+    <button type="submit" class="btn btn-success w-100 rounded-3">
+      Register
+    </button>
+  </div>
+</form>

@@ -1,0 +1,18 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules/
+
+# Angular specific files
+dist/
+build/
+
+# Environment files
+src/environments/environment*.ts
+
+# IDEs and editors
+.idea/
+.vscode/

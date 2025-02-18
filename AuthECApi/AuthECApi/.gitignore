@@ -1,0 +1,16 @@
+# Programs
+*.exe
+*.dll
+*.pdb
+*.mdb
+*.so
+*.dylib
+*.lib
+*.a
+*.app
+*.ipa
+*.apk
+*.cmo
+*.cma
+*.dll.config
+*.dotCover
