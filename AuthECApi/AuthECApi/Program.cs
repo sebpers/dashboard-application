@@ -4,7 +4,6 @@ using AuthECApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
 builder.Services.AddSwaggerExplorer()
@@ -25,5 +24,20 @@ app.MapControllers();
 app
     .MapGroup("/api")
     .MapIdentityApi<AppUser>();
+
+// Fix seeded roles (Admin, Teacher and Student)
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    try
+//    {
+//        await SeedData.SeedRoles(services);
+//        await SeedData.SeedUsers(services);
+//    }
+//    catch (Exception ex)
+//    {
+//        Console.WriteLine(ex.Message);
+//    }
+//}
 
 app.Run();

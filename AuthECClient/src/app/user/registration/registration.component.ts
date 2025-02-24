@@ -20,10 +20,11 @@ import { Router, RouterLink } from '@angular/router';
 export class RegistrationComponent implements OnInit {
   form: FormGroup;
   isSubmitted: boolean = false;
-
+  nextPage: boolean = false;
   formFields = [
     { name: 'firstName', type: 'text', placeholder: 'First name' },
     { name: 'lastName', type: 'text', placeholder: 'Last name' },
+    { name: 'age', type: 'number', placeholder: 'Age' },
     { name: 'email', type: 'text', placeholder: 'Email' },
     { name: 'password', type: 'password', placeholder: 'Password' },
     {
@@ -32,6 +33,16 @@ export class RegistrationComponent implements OnInit {
       placeholder: 'Confirm password',
     },
   ];
+
+  radioFields = [
+    { id: 'Admin', text: 'Admin', checked: true },
+    { id: 'Teacher', text: 'Teacher', checked: false },
+    { id: 'Student', text: 'Student', checked: false },
+  ];
+
+  onNextPage() {
+    this.nextPage = !this.nextPage;
+  }
 
   passwordMatchValidator: ValidatorFn = (control: AbstractControl): null => {
     const password = control.get('password');
@@ -59,6 +70,7 @@ export class RegistrationComponent implements OnInit {
       {
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
+        age: [null, [Validators.required, Validators.pattern(/^\d+$/)]], // Numbers only
         email: ['', [Validators.required, Validators.email]],
         password: [
           '',
@@ -69,6 +81,8 @@ export class RegistrationComponent implements OnInit {
           ],
         ],
         confirmPassword: [''],
+        gender: ['', Validators.required],
+        role: ['Admin', Validators.required],
       },
       {
         validators: this.passwordMatchValidator,
@@ -82,7 +96,9 @@ export class RegistrationComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  onSubmit(e: Event): void {
+    e.preventDefault();
+
     this.isSubmitted = true;
 
     if (this.form.valid) {
@@ -136,7 +152,7 @@ export class RegistrationComponent implements OnInit {
 
     if (control.hasError('required'))
       return `Please enter your ${controlName
-        .replace(/([A-Z])/g, ' $1') // Add a space between the camelCase
+        .replace(/([A-Z])/g, ' $1') // Add spaces before each uppercase letter
         .toLowerCase()}`;
 
     if (control.hasError('email')) return 'Please enter a valid email address.';

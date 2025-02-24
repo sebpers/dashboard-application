@@ -9,23 +9,94 @@
   </div>
 </div>
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <ng-container *ngFor="let field of formFields">
-    <div class="mb-3">
-      <input
-        [type]="field.type"
-        class="form-control bg-body-secondary"
-        [placeholder]="field.placeholder"
-        [formControlName]="field.name"
-      />
+<form [formGroup]="form" (ngSubmit)="onSubmit($event)">
+  <span *ngIf="!nextPage">
+    <ng-container *ngFor="let field of formFields">
+      <div class="mb-3">
+        <input
+          [type]="field.type"
+          class="form-control bg-body-secondary"
+          [placeholder]="field.placeholder"
+          [formControlName]="field.name"
+        />
 
-      <div *ngIf="hasDisplayableError(field.name)" class="error-feedback">
-        <div>
-          {{ getErrorMessage(field.name) }}
+        <div *ngIf="hasDisplayableError(field.name)" class="error-feedback">
+          <div>
+            {{ getErrorMessage(field.name) }}
+          </div>
         </div>
       </div>
+    </ng-container>
+
+    <div class="form-check">
+      <input
+        id="male"
+        class="form-check-input"
+        type="radio"
+        name="gender"
+        formControlName="gender"
+        value="Male"
+      />
+      <label class="form-check-label" for="male"> Male </label>
     </div>
-  </ng-container>
+
+    <div class="form-check">
+      <input
+        id="female"
+        class="form-check-input"
+        type="radio"
+        name="gender"
+        formControlName="gender"
+        value="Female"
+      />
+      <label class="form-check-label" for="female"> Female </label>
+    </div>
+
+    <div *ngIf="hasDisplayableError('gender')" class="error-feedback">
+      <div>
+        {{ getErrorMessage("gender") }}
+      </div>
+    </div>
+
+    <hr />
+  </span>
+
+  <div class="mt-2">
+    <button type="button" class="btn btn-success" (click)="onNextPage()">
+      {{ nextPage ? "Back" : "Next" }}
+    </button>
+  </div>
+
+  <span *ngIf="nextPage" class="d-block mt-3">
+    <div>
+      <span class="text-info">Temporary selection</span>
+    </div>
+
+    <ng-container *ngFor="let radioField of radioFields">
+      <div class="border border-1 p-2 mt-2 rounded">
+        <div class="form-check">
+          <input
+            [checked]="radioField.checked"
+            class="form-check-input"
+            type="radio"
+            name="role"
+            [id]="'role-' + radioField.id"
+            [value]="radioField.id"
+            formControlName="role"
+          />
+          <label class="form-check-label" [for]="'role-' + radioField.id">
+            {{ radioField.text }}
+          </label>
+        </div>
+      </div>
+    </ng-container>
+
+    <div *ngIf="hasDisplayableError('role')" class="error-feedback">
+      <div>
+        {{ getErrorMessage("role") }}
+      </div>
+    </div>
+  </span>
 
   <div class="mt-4">
     <button type="submit" class="btn btn-success w-100 rounded-3">

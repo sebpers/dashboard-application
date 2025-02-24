@@ -13,6 +13,12 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   signUp(formData: any): Observable<any> {
+    /*
+      ! Warning
+      Default value for Role, Gender, Age, LibraryId?
+      instead of registration form, there should be some other
+      form to update these details of the user
+    */
     return this.http.post(`${this.baseUrl}/signup`, formData);
   }
 
@@ -34,5 +40,11 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);
+  }
+
+  getClaims() {
+    const claims = JSON.parse(window.atob(this.getToken()!.split('.')[1])); // Decode token
+
+    return claims;
   }
 }

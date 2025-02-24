@@ -67,6 +67,8 @@ namespace AuthECApi.Controllers
 
             var result = await _userManager.CreateAsync(userModel, userRequest.Password);
 
+            await _userManager.AddToRoleAsync(userModel, userRequest.Role);
+
             if (result.Succeeded)
             {
                 return Ok(result);
@@ -86,13 +88,25 @@ namespace AuthECApi.Controllers
                 var secretKey = _appSettings.JWTSecret ?? throw new InvalidOperationException("Secret key is missing.");
                 var signInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)); // Convert to securiy key
 
+                var userRoles = await _userManager.GetRolesAsync(user);
+
+                ClaimsIdentity claims = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(CustomClaimTypes.UserId, user.Id),
+                    new Claim(ClaimTypes.Role, userRoles.First()),
+                    new Claim("gender", user.Gender),
+                    new Claim("age", (DateTime.Now.Year - user.DOB.Year).ToString()),
+                });
+
+                if (user.LibraryId != null)
+                {
+                    claims.AddClaim(new Claim("libraryId", user.LibraryId.ToString()!)); // Ignore warning message since libraryId will never be null here
+                }
+
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(CustomClaimTypes.UserId, user.Id),
-                    }),
-                    Expires = DateTime.UtcNow.AddDays(10),
+                    Subject = claims,
+                    Expires = DateTime.UtcNow.AddMinutes(1),
                     SigningCredentials = new SigningCredentials(
                         signInKey,
                         SecurityAlgorithms.HmacSha256Signature
@@ -104,7 +118,7 @@ namespace AuthECApi.Controllers
                 var token = tokenHandler.WriteToken(securityToken);
 
 
-                return Ok(new { token });    
+                return Ok(new { token });
             }
             else
             {
